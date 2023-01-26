@@ -1,5 +1,5 @@
 # ws-score-broadcast
-score broadcast with websocket in nodejs
+simple score broadcast with websocket in nodejs
 
 ### `npm install`
 
