@@ -1,11 +1,10 @@
 # ws-score-broadcast
 score broadcast with websocket in nodejs
 
-
-npm install
+### `npm install`
 
 Install all the dependencies of the project
 
-node webSocket.js
+### `npm start`
 
 Runs the app on port 8080.
