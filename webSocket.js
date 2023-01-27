@@ -21,6 +21,18 @@ wss.on('connection', function(ws) {
 						ADMINS.push(ws)
         					console.log("admin added")
                 				ws.send("you become admin now! your uuid ==> " + ws.uuid)
+
+						CLIENTS.forEach(async (client) => {
+                        				//console.log(client.uuid)
+                        				if(client.uuid == ws.uuid){
+                                				let index = CLIENTS.indexOf(client)
+                                				if(index > -1){
+                                        				CLIENTS.splice(index,1)
+                               	 				}
+                        				}
+                				})
+
+						//ws.send("connected clients: " + CLIENTS.length)	
                 				ws.type = "admin"
 					}
 				}else{
@@ -34,7 +46,7 @@ wss.on('connection', function(ws) {
         			console.log("client added")
 				console.log("you registered! uuid: " + formattedMessage.uuid)
 				ws.send("you registered! uuid: " + formattedMessage.uuid)	
-			}else {
+			}else if(!formattedMessage.uuid && !formattedMessage.type) {
 
 				if(ws.type == "admin"){
                 			console.log('received: %s', message)
@@ -52,16 +64,15 @@ wss.on('connection', function(ws) {
                 	ws.send("incorrect format")
         	}
 
-       });
+       	});
 
 	ws.send("NEW USER JOINED");
-
 	ws.onclose = () => 
 	{
 		CLIENTS.forEach(async (client) => {
 			
 			console.log(client.uuid)
-			if(client.uuid){
+			if(client.uuid	&& client.uuid == ws.uuid){
 				let index = CLIENTS.indexOf(client)
 				if(index > -1){
 					CLIENTS.splice(index,1)
@@ -74,7 +85,7 @@ wss.on('connection', function(ws) {
 		ADMINS.forEach(async (client) => {
 
                         console.log(client.uuid)
-                        if(client.uuid){
+                        if(client.uuid  && client.uuid == ws.uuid){
                                 let index = ADMINS.indexOf(client)
                                 if(index > -1){
                                         ADMINS.splice(index,1)
@@ -88,15 +99,16 @@ wss.on('connection', function(ws) {
 		console.log("connected clients: " + CLIENTS.length)
 		ws.close()
 	}
-
 	
 });
     
 function sendAll(message) {
+	console.log("clients: ", CLIENTS.length)
+	console.log("admins: ",ADMINS.length)
 	for (var i=0; i<CLIENTS.length; i++) {
-		CLIENTS[i].send("Message: " + message);
+		CLIENTS[i].send(message.toString());
 	}
-	for (var j=0; i<ADMINS.length; i++){
-		ADMINS[j].send("Message: " + message);	
+	for (var j=0; j<ADMINS.length; j++){
+		ADMINS[j].send(message.toString());	
 	}
 }
